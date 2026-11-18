@@ -211,10 +211,10 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
         <h1>A clean fade at home</h1>
         <p class="sub">Scan your head once and pick your cut. The clipper sets the guard as you go.</p>
         <div class="ctas">
-          <a class="btn" href="#preorder">Preorder for $1,999</a>
+          <a class="btn" href="#preorder">Preorder for $1,199</a>
           <a href="#how">See how it works</a>
         </div>
-        <p class="fine">Or $56 a month. 30 day returns.</p>
+        <p class="fine">Or about $33 a month. 30 day returns.</p>
       </div>
 
       <div class="rig" aria-labelledby="rigTitle">
@@ -287,7 +287,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
 
 <div class="statband"><div class="wrap stats" aria-label="CutIQ in numbers">
   <div class="stat"><b>$693</b><span>a year at the barber ($40 every 3 weeks)</span></div>
-  <div class="stat"><b>35 mo</b><span>until CutIQ pays for itself</span></div>
+  <div class="stat"><b>21 mo</b><span>until CutIQ pays for itself</span></div>
   <div class="stat"><b>0</b><span>guard swaps</span></div>
   <div class="stat"><b>4</b><span>hair types covered</span></div>
 </div></div>
@@ -381,7 +381,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
         </div>
         <div class="out" aria-live="polite">
           <div><b id="oYear">$693</b><small>a year at the barber</small></div>
-          <div class="hit"><b id="oBack">35 mo</b><small>until CutIQ pays for itself</small></div>
+          <div class="hit"><b id="oBack">21 mo</b><small>until CutIQ pays for itself</small></div>
         </div>
       </div>
     </div>
@@ -390,8 +390,8 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
   <section id="preorder" class="priceband">
     <div class="wrap price">
       <div>
-        <div class="big">$1,999</div>
-        <p class="per">Or $56 a month for 36 months</p>
+        <div class="big">$1,199</div>
+        <p class="per">Or about $33 a month for 36 months</p>
         <ul class="checks">
           <li>Everything in the box</li>
           <li>Profiles for the whole house</li>
@@ -576,7 +576,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
     var p=Math.max(0,+cP.value||0), w=Math.max(1,+cW.value||1), n=Math.max(1,Math.round(+cN.value||1));
     var year=p*(52/w)*n;
     document.getElementById("oYear").textContent="$"+Math.round(year).toLocaleString("en-US");
-    document.getElementById("oBack").textContent= year>0 ? Math.ceil(1999/(year/12))+" mo" : "n/a";
+    document.getElementById("oBack").textContent= year>0 ? Math.ceil(1199/(year/12))+" mo" : "n/a";
   }
   [cP,cW,cN].forEach(function(i){i.addEventListener("input",calc);});
   calc();
