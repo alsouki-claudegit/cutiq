@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CutIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a bathroom counter. Tile grid behind a live side view of a head where the
+   clipper climbs the back and the fade appears under it; everything else stays quiet and left aligned. */
+:root{
+  --tile:#EEF3F2;      /* page, white bathroom tile */
+  --grout:#D3DEDC;     /* tile lines, rules */
+  --ink:#13232B;       /* text */
+  --muted:#4E6168;     /* secondary text */
+  --jar:#0B7A77;       /* barber disinfectant jar teal, the one accent */
+  --panel:#FFFFFF;     /* counter top surfaces */
+  --skin:#B98A6A;
+  --hair:#1B1A19;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--tile);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+a{color:var(--jar)}
+:focus-visible{outline:3px solid var(--jar);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.02;letter-spacing:.005em;text-wrap:balance;margin:0}
+h2{font-size:clamp(2.2rem,4.6vw,3.4rem)}
+h3{font-size:1.55rem;font-weight:600}
+p{margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+
+/* nav */
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+.logo{font-family:var(--display);font-weight:800;font-size:1.9rem;color:var(--ink);text-decoration:none;letter-spacing:.01em}
+.logo span{color:var(--jar)}
+.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;align-items:center}
+.nav ul a{color:var(--ink);text-decoration:none;font-weight:500}
+.nav ul a:hover{color:var(--jar)}
+.btn{display:inline-block;background:var(--jar);color:#fff;font-weight:600;text-decoration:none;border:0;
+  padding:13px 22px;border-radius:999px;font-family:var(--body);font-size:1rem;cursor:pointer}
+.btn:hover{background:#086663}
+.nav .btn{padding:9px 18px;color:#fff}
+
+/* hero */
+.hero{background-image:linear-gradient(var(--grout) 1px,transparent 1px),linear-gradient(90deg,var(--grout) 1px,transparent 1px);
+  background-size:36px 36px;border-bottom:1px solid var(--grout)}
+.hero-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;padding:20px 0 48px}
+.hero h1{font-size:clamp(2.7rem,5.4vw,4.7rem);font-weight:800}
+.hero .sub{margin-top:22px;max-width:30em;font-size:1.13rem;color:var(--muted)}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:30px}
+.hero .fine{margin-top:14px;font-size:.95rem;color:var(--muted)}
+.copy{background:color-mix(in srgb,var(--tile) 82%,transparent);padding:8px 0}
+
+.rig{background:var(--panel);border:1px solid var(--grout);border-radius:22px;padding:20px 20px 22px;box-shadow:0 18px 40px -24px rgba(19,35,43,.35)}
+.rig-top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.rig svg{width:100%;height:auto;display:block;max-height:min(46vh,430px);margin:0 auto}
+.readout{background:var(--ink);color:#EAF6F5;border-radius:14px;padding:12px 16px;min-width:132px;text-align:right}
+.readout small{display:block;font-size:.78rem;color:#9FC9C6}
+.readout b{display:block;font-family:var(--display);font-size:3.2rem;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+.readout span{font-size:.9rem;font-variant-numeric:tabular-nums}
+.plan{font-size:.95rem;color:var(--muted);margin-top:4px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-size:.85rem;font-weight:600;margin-bottom:6px;padding:0}
+.seg{position:relative;display:flex;background:var(--tile);border:1px solid var(--grout);border-radius:999px;padding:3px}
+.seg label{flex:1;text-align:center;font-size:.9rem;padding:7px 4px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg input:checked+label{background:var(--ink);color:#fff}
+.seg input:focus-visible+label{outline:3px solid var(--jar);outline-offset:1px}
+.replay{background:none;border:0;color:var(--jar);font:600 .9rem var(--body);cursor:pointer;padding:10px 0 0;margin-top:2px;min-height:34px}
+
+/* sections */
+section{padding:84px 0}
+.lead{max-width:36em;color:var(--muted);margin-top:14px;font-size:1.08rem}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:44px;counter-reset:step}
+.step{border-top:3px solid var(--ink);padding-top:16px}
+.step .n{font-family:var(--display);font-weight:800;font-size:2.6rem;color:var(--jar);line-height:1}
+.step h3{margin:6px 0 8px}
+.step p{color:var(--muted);font-size:.98rem}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.box-list{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--grout)}
+.box-list li{display:grid;grid-template-columns:1fr auto;gap:16px;padding:14px 0;border-bottom:1px solid var(--grout)}
+.box-list li span{color:var(--muted);font-size:.95rem;text-align:right}
+
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+.type{background:var(--panel);border:1px solid var(--grout);border-radius:14px;padding:14px}
+.type svg{width:100%;height:46px;display:block;margin-bottom:8px}
+.type b{display:block}
+.type small{color:var(--muted)}
+
+.dark{background:var(--ink);color:#EAF2F1}
+.dark .lead,.dark p{color:#B9CBCB}
+.dark h2{color:#fff}
+.sensors{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:12px}
+.sensors li{border-left:3px solid #2FB3AF;padding:2px 0 2px 14px;color:#DDE9E8}
+
+.calc{background:var(--panel);border:1px solid var(--grout);border-radius:22px;padding:28px}
+.calc .fields{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.calc label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px}
+.calc input{width:100%;font:500 1.15rem var(--body);padding:10px 12px;border:1px solid var(--grout);border-radius:10px;background:var(--tile);color:var(--ink)}
+.out{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;border-top:1px solid var(--grout);padding-top:20px}
+.out b{display:block;font-family:var(--display);font-weight:800;font-size:2.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.out small{color:var(--muted);font-size:.88rem}
+.out .hit b{color:var(--jar)}
+.note{font-size:.88rem;color:var(--muted);margin-top:16px}
+
+.price{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(5rem,12vw,8.5rem);line-height:.9}
+.per{font-size:1.15rem;margin-top:8px}
+.checks{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:10px}
+.checks li{padding-left:28px;position:relative}
+.checks li::before{content:"";position:absolute;left:2px;top:.55em;width:12px;height:7px;border-left:2.5px solid var(--jar);border-bottom:2.5px solid var(--jar);transform:rotate(-45deg)}
+form.reserve{background:var(--panel);border:1px solid var(--grout);border-radius:22px;padding:28px}
+form.reserve label{display:block;font-weight:600;margin-bottom:8px}
+form.reserve input{width:100%;font:500 1.05rem var(--body);padding:12px 14px;border:1px solid var(--grout);border-radius:10px;background:var(--tile);margin-bottom:14px}
+form.reserve .btn{width:100%}
+.done{margin-top:14px;font-size:.95rem;color:var(--jar);font-weight:600;min-height:1.5em}
+
+.faq{max-width:780px}
+details{border-bottom:1px solid var(--grout);padding:18px 0}
+details:first-of-type{border-top:1px solid var(--grout);margin-top:28px}
+summary{cursor:pointer;font-weight:600;font-size:1.08rem;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--display);font-size:1.6rem;line-height:1;color:var(--jar)}
+details[open] summary::after{content:"\2212"}
+details p{color:var(--muted);margin-top:10px;max-width:40em}
+
+footer{border-top:1px solid var(--grout);padding:30px 0 44px;font-size:.9rem;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+
+@media (max-width:900px){
+  .hero-grid,.split,.price{grid-template-columns:1fr;gap:36px}
+  .rig svg{max-height:520px}
+  .steps{grid-template-columns:1fr 1fr}
+  .nav ul li:not(:last-child){display:none}
+}
+@media (max-width:560px){
+  .steps,.types{grid-template-columns:1fr 1fr}
+  .controls,.calc .fields,.out{grid-template-columns:1fr}
+  .rig-top{grid-template-columns:1fr}
+  .rig svg{max-height:none}
+  .box-list li{grid-template-columns:1fr;gap:2px}
+  .box-list li span{text-align:left}
+  .replay{min-height:44px;width:100%;text-align:left}
+  .hero .ctas a:not(.btn){padding:10px 0}
+  .readout{text-align:left;display:flex;align-items:baseline;gap:12px}
+  .readout b{font-size:2.4rem}
+  section{padding:60px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a class="logo" href="#top">Cut<span>IQ</span></a>
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#savings">Savings</a></li>
+        <li><a href="#faq">Questions</a></li>
+        <li><a class="btn" href="#preorder">Preorder</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-grid" id="top">
+      <div class="copy">
+        <h1>A clean fade at home. The clipper changes the guard.</h1>
+        <p class="sub">Scan your head once and pick your cut. As you move up the side of your head, CutIQ sets the guard length for that exact spot, so the blend comes out even and you never stop to swap guards.</p>
+        <div class="ctas">
+          <a class="btn" href="#preorder">Preorder for $1,999</a>
+          <a href="#how">See how it works</a>
+        </div>
+        <p class="fine">Or about $56 a month for 36 months. 30 day returns.</p>
+      </div>
+
+      <div class="rig" aria-labelledby="rigTitle">
+        <div class="rig-top">
+          <div>
+            <h3 id="rigTitle">Build your fade</h3>
+            <p class="plan" id="planText">Mid fade, #0.5 at the neck up to #6 on top.</p>
+          </div>
+          <div class="readout" aria-live="polite">
+            <small>Guard right now</small>
+            <b id="roGuard">#6</b>
+            <span id="roMm">19 mm</span>
+          </div>
+        </div>
+
+        <svg id="head" viewBox="0 0 380 430" role="img" aria-label="Side view of a head showing the fade the clipper will cut, with guard numbers marked from the neck up">
+          <defs>
+            <clipPath id="headClip"><path id="headPath" d=""/></clipPath>
+            <clipPath id="hairClip"><path d="M318 108 C306 128 298 150 294 168 C288 190 284 210 283 232 L282 262 L262 266 C256 284 236 292 216 282 C204 300 186 322 166 344 C146 366 124 384 104 396 L60 430 L0 430 L0 0 L380 0 L380 84 Z"/></clipPath>
+            <clipPath id="cutClip"><rect id="cutRect" x="0" y="0" width="380" height="430"/></clipPath>
+            <linearGradient id="fadeGrad" gradientUnits="userSpaceOnUse" x1="0" y1="398" x2="0" y2="50"></linearGradient>
+          </defs>
+          <g id="ruler"></g>
+          <g transform="translate(18,0)">
+            <path id="headFill" d="" fill="var(--skin)"/>
+            <g clip-path="url(#headClip)">
+              <g clip-path="url(#hairClip)">
+                <rect id="uncut" x="0" y="0" width="380" height="430" fill="var(--hair)"/>
+                <g clip-path="url(#cutClip)">
+                  <rect x="0" y="0" width="380" height="430" fill="var(--skin)"/>
+                  <rect x="0" y="0" width="380" height="430" fill="url(#fadeGrad)"/>
+                </g>
+              </g>
+            </g>
+            <path id="headLine" d="" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="238" cy="242" rx="19" ry="33" fill="var(--skin)" stroke="var(--ink)" stroke-width="2"/>
+            <path d="M242 222 C228 226 228 254 240 262" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+            <circle cx="318" cy="208" r="3.4" fill="var(--ink)"/>
+            <line id="cutLine" x1="40" x2="300" y1="398" y2="398" stroke="#2FB3AF" stroke-width="2" stroke-dasharray="6 5"/>
+          </g>
+          <g id="clipper">
+            <rect x="2" y="-14" width="30" height="28" rx="7" fill="var(--jar)"/>
+            <rect x="8" y="-8" width="18" height="4" rx="2" fill="#fff"/>
+          </g>
+        </svg>
+
+        <div class="controls">
+          <fieldset>
+            <legend>Fade height</legend>
+            <div class="seg">
+              <input type="radio" name="height" id="hLow" value="low"><label for="hLow">Low</label>
+              <input type="radio" name="height" id="hMid" value="mid" checked><label for="hMid">Mid</label>
+              <input type="radio" name="height" id="hHigh" value="high"><label for="hHigh">High</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Length on top</legend>
+            <div class="seg">
+              <input type="radio" name="top" id="t4" value="4"><label for="t4">½ in</label>
+              <input type="radio" name="top" id="t6" value="6" checked><label for="t6">¾ in</label>
+              <input type="radio" name="top" id="t8" value="8"><label for="t8">1 in</label>
+            </div>
+          </fieldset>
+        </div>
+        <button class="replay" type="button" id="replay">Run the cut again</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="how">
+    <div class="wrap">
+      <h2>Four steps from scan to fade</h2>
+      <p class="lead">You still hold the clipper. CutIQ handles the part that takes barbers years to learn: knowing which guard goes where and blending between them.</p>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Scan</h3><p>Run the wand over your head, the same way a dentist scans teeth for a retainer. The screen shows the spots it still needs.</p></div>
+        <div class="step"><div class="n">2</div><h3>Pick the cut</h3><p>Choose a low, mid or high fade and how long you want the top. Or set the length for each area yourself.</p></div>
+        <div class="step"><div class="n">3</div><h3>Cut</h3><p>Sides and back first, then the top. The screen tells you where to move next while the guard adjusts on its own.</p></div>
+        <div class="step"><div class="n">4</div><h3>Save it</h3><p>Your scan and your cut stay on your profile. Next time you go straight to cutting.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark">
+    <div class="wrap split">
+      <div>
+        <h2>If it loses track, the blade stops</h2>
+        <p class="lead">The worst home haircut is the one spot you took down to the skin by accident. CutIQ watches where the clipper is the whole time, and if it can't tell, it stops cutting until you put it back where the screen shows.</p>
+      </div>
+      <div>
+        <h3 style="color:#fff">Three sensors in the clipper</h3>
+        <ul class="sensors">
+          <li>An optical motion sensor, like the one under a computer mouse, reads how far you moved.</li>
+          <li>A motion chip, like the one in your phone, reads the angle you're holding it at.</li>
+          <li>A small depth camera matches where you are against your head scan.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div>
+        <h2>What's in the box</h2>
+        <ul class="box-list">
+          <li>Scanning wand <span>builds your 3D head model</span></li>
+          <li>Smart clipper <span>motorized guard, three sensors</span></li>
+          <li>Touchscreen <span>shows the scan and your next move</span></li>
+          <li>Charging dock <span>fits on a bathroom counter</span></li>
+          <li>One guard for your hair type <span>you choose at checkout</span></li>
+        </ul>
+        <p class="note">Everyone in the house gets a profile with their own scan, hair type and saved cuts, so roommates or a family can share one CutIQ.</p>
+      </div>
+      <div>
+        <h2>A guard made for your hair</h2>
+        <p class="lead">Curly hair and straight hair don't cut the same. At setup you pick your texture, thickness and density, and CutIQ changes its cutting plan to match. Extra guards are sold separately.</p>
+        <div class="types">
+          <div class="type"><svg viewBox="0 0 80 46" aria-hidden="true"><path d="M8 40 V6 M24 40 V6 M40 40 V6 M56 40 V6 M72 40 V6" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>Straight</b><small>Guard S</small></div>
+          <div class="type"><svg viewBox="0 0 80 46" aria-hidden="true"><path d="M10 40 C2 30 18 20 10 8 M30 40 C22 30 38 20 30 8 M50 40 C42 30 58 20 50 8 M70 40 C62 30 78 20 70 8" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>Wavy</b><small>Guard W</small></div>
+          <div class="type"><svg viewBox="0 0 80 46" aria-hidden="true"><path d="M12 42 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12 M40 42 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12 M68 42 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12 c-8 -4 8 -8 0 -12" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>Curly</b><small>Guard C</small></div>
+          <div class="type"><svg viewBox="0 0 80 46" aria-hidden="true"><path d="M14 42 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 M40 42 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 M66 42 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6 c-6 -2 6 -4 0 -6" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>Coily</b><small>Guard K</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="savings" style="padding-top:0">
+    <div class="wrap split">
+      <div>
+        <h2>What the barber costs you</h2>
+        <p class="lead">Put in what you pay now. At $40 every three weeks, that's about $693 a year. CutIQ is a one time cost, and the more people in the house who use it, the faster it pays for itself.</p>
+      </div>
+      <div class="calc">
+        <div class="fields">
+          <div><label for="cPrice">Price per cut ($)</label><input id="cPrice" type="number" min="5" max="300" step="1" value="40" inputmode="numeric"></div>
+          <div><label for="cWeeks">Weeks between cuts</label><input id="cWeeks" type="number" min="1" max="12" step="1" value="3" inputmode="numeric"></div>
+          <div><label for="cPeople">People using it</label><input id="cPeople" type="number" min="1" max="8" step="1" value="1" inputmode="numeric"></div>
+        </div>
+        <div class="out" aria-live="polite">
+          <div><b id="oYear">$693</b><small>a year at the barber</small></div>
+          <div><b id="oFive">$3,467</b><small>over five years</small></div>
+          <div class="hit"><b id="oBack">35 mo</b><small>until CutIQ pays for itself</small></div>
+        </div>
+        <p class="note">Haircut costs only. Tips, travel, replacement parts and extra guards are left out.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="preorder" style="background:var(--panel);border-top:1px solid var(--grout);border-bottom:1px solid var(--grout)">
+    <div class="wrap price">
+      <div>
+        <div class="big">$1,999</div>
+        <p class="per">Or about $56 a month for 36 months.</p>
+        <ul class="checks">
+          <li>Wand, clipper, touchscreen, dock and one guard</li>
+          <li>Profiles for everyone in the house</li>
+          <li>30 day returns if it doesn't work on your hair</li>
+          <li>No subscription. Every cutting feature works without one.</li>
+        </ul>
+      </div>
+      <form class="reserve" id="reserve" novalidate>
+        <h3 style="margin-bottom:14px">Reserve one from the first batch</h3>
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+        <button class="btn" type="submit">Reserve mine</button>
+        <p class="done" id="done" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap faq">
+      <h2>Questions</h2>
+      <details><summary>I've never cut hair. Can I really do a fade?</summary><p>That's who it's built for. You move the clipper where the screen tells you. Picking the guard and blending between lengths is the clipper's job.</p></details>
+      <details><summary>Does it work on curly or coily hair?</summary><p>Yes, with the guard made for it. Pick your hair type at setup and CutIQ recommends the right guard and adjusts the plan.</p></details>
+      <details><summary>What happens if I move the wrong way?</summary><p>The blade stops. It starts again once the clipper is back where it should be.</p></details>
+      <details><summary>Can my roommate use it too?</summary><p>Yes. Each person gets a profile with their own scan, hair type and saved cuts.</p></details>
+      <details><summary>Do I have to pay every month?</summary><p>No. More hairstyles may come later as optional add ons, but everything you need to cut works without paying again.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>CutIQ</span>
+    <span>CutIQ is a concept product made for a college class project. It is not for sale, and the reserve form does not send or store anything.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // standard clipper guard sizes: guard number -> millimetres
+  var MM={0.5:1.5,1:3,1.5:4.5,2:6,3:10,4:13,6:19,8:25};
+  var INCH={4:"½ in",6:"¾ in",8:"1 in"};
+  var LOW=[0.5,1,1.5,2,3];
+  var Y0=398, YTOP=50, BLEND=46;
+  var END={low:305,mid:262,high:214};
+  var NAME={low:"Low",mid:"Mid",high:"High"};
+  var HEAD="M118 412 C112 372 96 346 84 302 C66 236 72 150 120 100 C160 58 230 48 275 72 C315 94 332 130 334 170 C336 190 338 200 342 210 C350 228 362 248 366 262 C360 270 350 272 344 274 C348 284 350 292 346 298 C350 304 348 312 342 316 C346 330 342 350 326 358 C306 364 284 362 270 356 C266 380 266 404 268 430 L120 430 Z";
+  ["headPath","headFill","headLine"].forEach(function(id){document.getElementById(id).setAttribute("d",HEAD);});
+
+  var NS="http://www.w3.org/2000/svg";
+  var grad=document.getElementById("fadeGrad"), ruler=document.getElementById("ruler");
+  var cutRect=document.getElementById("cutRect"), cutLine=document.getElementById("cutLine"), clipper=document.getElementById("clipper");
+  var roG=document.getElementById("roGuard"), roM=document.getElementById("roMm"), plan=document.getElementById("planText");
+  var state={height:"mid",top:6}, raf=null;
+
+  function alpha(mm){return 0.15+0.85*Math.sqrt(Math.min(mm,25)/25);}
+  function off(y){return ((Y0-y)/(Y0-YTOP)).toFixed(4);}
+  function el(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
+
+  function bands(){
+    var yEnd=END[state.height], h=(Y0-yEnd)/LOW.length, out=[];
+    LOW.forEach(function(g,i){out.push({g:g,y1:Y0-i*h,y2:Y0-(i+1)*h});});
+    out.push({g:state.top,y1:yEnd,y2:YTOP,blend:true});
+    return out;
+  }
+  function guardAt(y){
+    var b=bands();
+    for(var i=0;i<b.length;i++){ if(y<=b[i].y1 && y>b[i].y2) return b[i].g; }
+    return y>Y0?LOW[0]:state.top;
+  }
+
+  function draw(){
+    var b=bands(), yEnd=END[state.height];
+    while(grad.firstChild) grad.removeChild(grad.firstChild);
+    b.slice(0,LOW.length).forEach(function(z){
+      grad.appendChild(el("stop",{offset:off((z.y1+z.y2)/2),"stop-color":"#1B1A19","stop-opacity":alpha(MM[z.g])}));
+    });
+    grad.insertBefore(el("stop",{offset:"0","stop-color":"#1B1A19","stop-opacity":alpha(MM[LOW[0]])}),grad.firstChild);
+    grad.appendChild(el("stop",{offset:off(yEnd-BLEND),"stop-color":"#1B1A19","stop-opacity":alpha(MM[state.top])}));
+    grad.appendChild(el("stop",{offset:"1","stop-color":"#1B1A19","stop-opacity":alpha(MM[state.top])}));
+    document.getElementById("uncut").setAttribute("opacity",alpha(25));
+
+    while(ruler.firstChild) ruler.removeChild(ruler.firstChild);
+    ruler.appendChild(el("line",{x1:40,x2:40,y1:YTOP,y2:Y0,stroke:"#D3DEDC","stroke-width":2}));
+    b.forEach(function(z,i){
+      var yc=z.blend?Math.max(YTOP+40,yEnd-BLEND-30):(z.y1+z.y2)/2;
+      ruler.appendChild(el("line",{x1:35,x2:45,y1:z.y1,y2:z.y1,stroke:"#4E6168","stroke-width":1.5}));
+      var t=el("text",{x:32,y:yc+5,"text-anchor":"end","font-family":"Big Shoulders Display, Arial Narrow, sans-serif","font-weight":"800","font-size":"17",fill:"#13232B"});
+      t.textContent="#"+z.g; ruler.appendChild(t);
+    });
+
+    plan.textContent=NAME[state.height]+" fade, #0.5 at the neck up to #"+state.top+" ("+INCH[state.top]+") on top.";
+  }
+
+  function setPos(y){
+    cutRect.setAttribute("y",y); cutRect.setAttribute("height",430-y);
+    cutLine.setAttribute("y1",y); cutLine.setAttribute("y2",y);
+    clipper.setAttribute("transform","translate(44,"+y+")");
+    cutLine.style.opacity = (y<=YTOP+1)?0:1;
+    var g=guardAt(y);
+    roG.textContent="#"+g; roM.textContent=MM[g]+" mm";
+  }
+
+  function run(){
+    if(raf) cancelAnimationFrame(raf);
+    var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce){ setPos(Y0-1); return; }
+    var start=null, dur=2600, from=Y0+20, to=YTOP;
+    function step(t){
+      if(!start) start=t;
+      var p=Math.min(1,(t-start)/dur), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+      var y=from+(to-from)*e;
+      setPos(y);
+      if(p<1) raf=requestAnimationFrame(step);
+      else { setPos(YTOP); settle(); }
+    }
+    raf=requestAnimationFrame(step);
+  }
+  // after the pass, park the clipper at the fade line so the readout shows the transition point
+  function settle(){
+    var y=END[state.height]+4;
+    clipper.setAttribute("transform","translate(44,"+y+")");
+    cutLine.style.opacity=0;
+    var g=guardAt(y); roG.textContent="#"+g; roM.textContent=MM[g]+" mm";
+  }
+
+  document.querySelectorAll('input[name="height"]').forEach(function(r){r.addEventListener("change",function(){state.height=r.value;draw();run();});});
+  document.querySelectorAll('input[name="top"]').forEach(function(r){r.addEventListener("change",function(){state.top=+r.value;draw();run();});});
+  document.getElementById("replay").addEventListener("click",run);
+
+  // hovering or dragging over the head moves the clipper and reads out the guard for that height
+  var svg=document.getElementById("head");
+  function point(evt){
+    var pt=svg.createSVGPoint(); var src=evt.touches?evt.touches[0]:evt;
+    pt.x=src.clientX; pt.y=src.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function probe(evt){
+    if(raf){cancelAnimationFrame(raf);raf=null;setPos(YTOP);}
+    var y=Math.max(YTOP+2,Math.min(Y0,point(evt).y));
+    clipper.setAttribute("transform","translate(44,"+y+")");
+    var g=guardAt(y); roG.textContent="#"+g; roM.textContent=MM[g]+" mm";
+  }
+  svg.addEventListener("mousemove",probe);
+  svg.addEventListener("touchmove",function(e){probe(e);},{passive:true});
+
+  draw(); setPos(YTOP); settle();
+  setTimeout(run,450);
+
+  // savings calculator
+  var cP=document.getElementById("cPrice"), cW=document.getElementById("cWeeks"), cN=document.getElementById("cPeople");
+  function money(n){return "$"+Math.round(n).toLocaleString("en-US");}
+  function calc(){
+    var p=Math.max(0,+cP.value||0), w=Math.max(1,+cW.value||1), n=Math.max(1,Math.round(+cN.value||1));
+    var year=p*(52/w)*n;
+    document.getElementById("oYear").textContent=money(year);
+    document.getElementById("oFive").textContent=money(year*5);
+    document.getElementById("oBack").textContent= year>0 ? Math.ceil(1999/(year/12))+" mo" : "n/a";
+  }
+  [cP,cW,cN].forEach(function(i){i.addEventListener("input",calc);});
+  calc();
+
+  // reserve form: a mockup, nothing leaves the page
+  document.getElementById("reserve").addEventListener("submit",function(e){
+    e.preventDefault();
+    var v=document.getElementById("email").value.trim(), d=document.getElementById("done");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ d.style.color="#A33A2E"; d.textContent="Enter an email address like name@example.com."; return; }
+    d.style.color=""; d.textContent="Reserved. This is a class mockup, so nothing was charged or sent.";
+  });
+})();
+</script>
+</body>
+</html>
