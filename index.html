@@ -230,36 +230,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
           </div>
         </div>
 
-        <svg id="head" viewBox="0 0 380 430" role="img" aria-label="Side view of a head showing the fade the clipper will cut, with guard numbers from the neck up">
-          <defs>
-            <clipPath id="headClip"><path class="headPath" d=""/></clipPath>
-            <clipPath id="hairClip"><path class="hairPath" d=""/></clipPath>
-            <clipPath id="cutClip"><rect id="cutRect" x="0" y="0" width="380" height="430"/></clipPath>
-            <linearGradient id="fadeGrad" gradientUnits="userSpaceOnUse" x1="0" y1="398" x2="0" y2="50"></linearGradient>
-          </defs>
-          <g id="ruler"></g>
-          <g transform="translate(18,0)">
-            <path class="headPath" d="" fill="var(--skin)"/>
-            <g clip-path="url(#headClip)">
-              <g clip-path="url(#hairClip)">
-                <rect id="uncut" x="0" y="0" width="380" height="430" fill="var(--hair)"/>
-                <g clip-path="url(#cutClip)">
-                  <rect x="0" y="0" width="380" height="430" fill="var(--skin)"/>
-                  <rect x="0" y="0" width="380" height="430" fill="url(#fadeGrad)"/>
-                </g>
-              </g>
-            </g>
-            <path class="headPath" d="" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
-            <ellipse cx="238" cy="242" rx="19" ry="33" fill="var(--skin)" stroke="var(--ink)" stroke-width="2"/>
-            <path d="M242 222 C228 226 228 254 240 262" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
-            <circle cx="318" cy="208" r="3.4" fill="var(--ink)"/>
-            <line id="cutLine" x1="40" x2="300" y1="398" y2="398" stroke="#2FB3AF" stroke-width="2" stroke-dasharray="6 5"/>
-          </g>
-          <g id="clipper">
-            <rect x="2" y="-14" width="30" height="28" rx="7" fill="var(--jar)"/>
-            <rect x="8" y="-8" width="18" height="4" rx="2" fill="#fff"/>
-          </g>
-        </svg>
+        <svg id="head" viewBox="0 0 400 440" role="img" aria-label="Side view of a man's head showing the fade the clipper will cut, with guard numbers from the neck up"></svg>
 
         <div class="controls">
           <fieldset>
@@ -298,11 +269,11 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
       <h2>No more lines in your fade</h2>
       <div class="ba">
         <figure>
-          <svg class="mini" data-mode="hand" viewBox="0 0 380 430" role="img" aria-label="Fade cut by swapping guards by hand, with a visible line at each guard change"></svg>
+          <svg class="mini" data-mode="hand" viewBox="30 14 340 430" role="img" aria-label="Fade cut by swapping guards by hand, with a visible line at each guard change"></svg>
           <figcaption><b>Swapping guards by hand</b><span>Every guard change leaves a line</span></figcaption>
         </figure>
         <figure class="us">
-          <svg class="mini" data-mode="cutiq" viewBox="0 0 380 430" role="img" aria-label="Fade cut with CutIQ, blending smoothly from the neck up"></svg>
+          <svg class="mini" data-mode="cutiq" viewBox="30 14 340 430" role="img" aria-label="Fade cut with CutIQ, blending smoothly from the neck up"></svg>
           <figcaption><b>CutIQ</b><span>The guard changes as you move, so it blends</span></figcaption>
         </figure>
       </div>
@@ -425,75 +396,169 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
 
 <script>
 (function(){
+  var NS="http://www.w3.org/2000/svg";
+  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
   // standard clipper guard sizes: guard number to millimetres
   var MM={0.5:1.5,1:3,1.5:4.5,2:6,3:10,4:13,6:19,8:25};
   var INCH={4:"½ in",6:"¾ in",8:"1 in"};
   var LOW=[0.5,1,1.5,2,3];
-  var Y0=398, YTOP=50, BLEND=46;
-  var END={low:305,mid:262,high:214};
+  var Y0=346, YTOP=40, BLEND=36;              // nape hairline, crown, length of the blend into the top
+  var END={low:250,mid:208,high:168};         // where the fade stops: mid ear, top of ear, temple
   var NAME={low:"Low",mid:"Mid",high:"High"};
-  var HEAD="M118 412 C112 372 96 346 84 302 C66 236 72 150 120 100 C160 58 230 48 275 72 C315 94 332 130 334 170 C336 190 338 200 342 210 C350 228 362 248 366 262 C360 270 350 272 344 274 C348 284 350 292 346 298 C350 304 348 312 342 316 C346 330 342 350 326 358 C306 364 284 362 270 356 C266 380 266 404 268 430 L120 430 Z";
-  var HAIR="M318 108 C306 128 298 150 294 168 C288 190 284 210 283 232 L282 262 L262 266 C256 284 236 292 216 282 C204 300 186 322 166 344 C146 366 124 384 104 396 L60 430 L0 430 L0 0 L380 0 L380 84 Z";
-  document.querySelectorAll(".headPath").forEach(function(p){p.setAttribute("d",HEAD);});
-  document.querySelectorAll(".hairPath").forEach(function(p){p.setAttribute("d",HAIR);});
+  var PX=0.55;                                // drawing pixels per millimetre of hair (head is about 23 cm tall)
+  var HAIRC="#1B1A19";
 
-  var NS="http://www.w3.org/2000/svg";
-  function el(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
-  function alpha(mm){return 0.15+0.85*Math.sqrt(Math.min(mm,25)/25);}
-  function off(y){return ((Y0-y)/(Y0-YTOP)).toFixed(4);}
+  // a man's head in profile, facing right
+  var SKULL="M118 346 C100 320 60 282 60 215 C60 120 130 42 205 40 C262 38 300 70 312 115";
+  var FACE_TAIL="C318 138 318 160 322 176 C326 182 322 188 318 194 C328 214 344 238 351 251 C355 258 348 265 337 264 C332 265 329 266 326 268 C327 274 331 278 332 283 C331 286 328 289 325 290 C330 292 331 296 329 301 C327 305 321 308 320 312 C321 318 331 326 329 338 C327 348 317 352 301 353 C285 354 263 352 253 358 C247 366 257 376 255 388 C253 400 249 415 251 440";
+  var HEAD="M128 440 C124 405 116 375 118 346 C100 320 60 282 60 215 C60 120 130 42 205 40 C262 38 300 70 312 115 "+FACE_TAIL+" Z";
+  var FACE="M306 99 C309 104 311 109 312 115 "+FACE_TAIL;
+  var NAPE="M118 346 C116 375 124 405 128 440";
+  var HAIRAREA="M305 96 C298 112 292 126 284 142 C276 152 270 158 268 166 L266 214 L241 214 C240 196 234 182 222 178 C206 176 196 186 193 204 C190 222 190 244 193 262 C180 286 160 312 140 330 C130 338 122 343 118 346 L40 362 L0 362 L0 0 L400 0 L400 60 Z";
+  var EAR="M228 186 C208 180 196 198 197 220 C198 242 205 262 219 267 C228 270 233 262 231 254 C230 246 236 240 236 230 C236 222 238 212 236 202 C234 192 232 188 228 186 Z";
+
+  function smooth(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  function alpha(mm){return mm<=0?0:0.15+0.85*Math.sqrt(Math.min(mm,25)/25);}
+
+  // hair length (mm) at height y for a fade plan; linear between band centres = a blended fade
+  function planMM(height,top){
+    var yEnd=END[height], h=(Y0-yEnd)/LOW.length, s=[[Y0+40,0],[Y0+2,1.5]];
+    LOW.forEach(function(g,k){s.push([Y0-(k+.5)*h,MM[g]]);});
+    s.push([yEnd-BLEND,MM[top]]); s.push([-200,MM[top]]);
+    return function(y){
+      if(y>s[0][0]) return 0;
+      for(var i=0;i<s.length-1;i++){var a=s[i],b=s[i+1];
+        if(y<=a[0]&&y>=b[0]){var t=(a[0]-y)/(a[0]-b[0]);return a[1]+(b[1]-a[1])*t;}}
+      return MM[top];
+    };
+  }
+  // the same mid fade cut by hand: flat bands with uneven hard edges
+  var HAND_H=(Y0-END.mid)/5;
+  var HAND_EDGES=[Y0+2,Y0-HAND_H*1.3,Y0-HAND_H*1.9,Y0-HAND_H*3.2,Y0-HAND_H*3.7,END.mid-8];
+  function handMM(y){
+    var seq=[0.5,1,1.5,2,3];
+    if(y>Y0+2) return 0;
+    for(var k=0;k<HAND_EDGES.length-1;k++){ if(y<=HAND_EDGES[k]&&y>HAND_EDGES[k+1]) return MM[seq[k]]; }
+    return MM[6];
+  }
+  function uncutMM(y){return y>Y0+2?0:25;}
+
+  var uid=0;
+  function buildHead(svg,opt){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    var id="hd"+(uid++), tx=opt.tx||0;
+    var defs=el("defs",{},svg);
+    el("path",{d:HEAD},el("clipPath",{id:id+"c"},defs));
+    el("path",{d:HAIRAREA},el("clipPath",{id:id+"a"},defs));
+
+    // walk the skull from the nape to the front hairline, with the outward normal at each step
+    var probe=el("g",{visibility:"hidden"},svg), sk=el("path",{d:SKULL},probe);
+    var L=sk.getTotalLength(), sEnd=L, s;
+    for(s=L*0.7;s<=L;s+=1){ if(sk.getPointAtLength(s).x>=303){sEnd=s;break;} }
+    var N=150, pts=[];
+    for(var i=0;i<=N;i++){
+      s=sEnd*i/N;
+      var p=sk.getPointAtLength(s), a=sk.getPointAtLength(Math.max(0,s-.6)), b=sk.getPointAtLength(Math.min(sEnd,s+.6));
+      var dx=b.x-a.x, dy=b.y-a.y, l=Math.hypot(dx,dy)||1, nx=dy/l, ny=-dx/l;
+      if((p.x-195)*nx+(p.y-215)*ny<0){nx=-nx;ny=-ny;}
+      pts.push({x:p.x,y:p.y,nx:nx,ny:ny,t:i/N});
+    }
+    svg.removeChild(probe);
+
+    // hair sticks out from the skull by its real length, so the outline shows the fade too
+    function band(mmAt,frac){
+      var outer=[],inner=[];
+      pts.forEach(function(p){
+        var f=smooth(p.t/0.06)*smooth((1-p.t)/0.12), d=mmAt(p.y)*PX*f*(frac||1);
+        outer.push((p.x+p.nx*d).toFixed(1)+" "+(p.y+p.ny*d).toFixed(1));
+        inner.push(p.x.toFixed(1)+" "+p.y.toFixed(1));
+      });
+      return {edge:"M"+outer.join(" L"), fill:"M"+outer.join(" L")+" L"+inner.reverse().join(" L")+" Z"};
+    }
+    function grad(mmAt,gid,samples){
+      var y1=Y0+40, y2=YTOP-30, g=el("linearGradient",{id:gid,gradientUnits:"userSpaceOnUse",x1:0,y1:y1,x2:0,y2:y2},defs);
+      for(var i=0;i<=samples;i++){var y=y1+(y2-y1)*i/samples;
+        el("stop",{offset:(i/samples).toFixed(4),"stop-color":HAIRC,"stop-opacity":alpha(mmAt(y)).toFixed(3)},g);}
+      return "url(#"+gid+")";
+    }
+    function hairLayer(parent,mmAt,samples,key){
+      var fill=grad(mmAt,id+"g"+key,samples);
+      var inner=el("g",{"clip-path":"url(#"+id+"a)"},el("g",{"clip-path":"url(#"+id+"c)"},parent));
+      el("rect",{x:0,y:0,width:400,height:440,fill:fill},inner);
+      var bd=band(mmAt);
+      el("path",{d:bd.fill,fill:fill},parent);
+      [0.45,0.8].forEach(function(fr){   // a little strand texture on the longer hair
+        el("path",{d:band(mmAt,fr).edge,fill:"none",stroke:"#4A3C31","stroke-width":1.1,"stroke-opacity":.45,"stroke-dasharray":"16 7"},parent);
+      });
+      el("path",{d:bd.edge,fill:"none",stroke:"var(--ink)","stroke-width":1.7,"stroke-linejoin":"round","stroke-opacity":.9},parent);
+      return inner;
+    }
+
+    // the neck fades out at the bottom instead of ending in a flat cut
+    var fm=el("linearGradient",{id:id+"fm",gradientUnits:"userSpaceOnUse",x1:0,y1:372,x2:0,y2:436},defs);
+    el("stop",{offset:0,"stop-color":"#fff"},fm); el("stop",{offset:1,"stop-color":"#000"},fm);
+    var mk=el("mask",{id:id+"m",maskUnits:"userSpaceOnUse",x:-50,y:-50,width:500,height:540},defs);
+    el("rect",{x:-50,y:-50,width:500,height:540,fill:"url(#"+id+"fm)"},mk);
+    var root=el("g",{transform:"translate("+tx+",0)",mask:"url(#"+id+"m)"},svg);
+    el("path",{d:HEAD,fill:"var(--skin)"},root);
+    // soft shadow under the jaw
+    var sg=el("linearGradient",{id:id+"sg",gradientUnits:"userSpaceOnUse",x1:0,y1:338,x2:0,y2:392},defs);
+    el("stop",{offset:0,"stop-color":"#000","stop-opacity":.16},sg); el("stop",{offset:1,"stop-color":"#000","stop-opacity":0},sg);
+    el("path",{d:"M301 353 C285 354 263 352 253 358 C247 366 257 376 255 388 L255 396 L118 396 L118 346 C160 336 200 330 236 312 C252 336 278 350 301 353 Z",fill:"url(#"+id+"sg)","clip-path":"url(#"+id+"c)"},root);
+
+    var api={};
+    if(opt.mode==="live"){
+      var ur=el("rect",{x:0,y:0,width:400,height:0},el("clipPath",{id:id+"u"},defs));
+      var cr=el("rect",{x:0,y:0,width:400,height:440},el("clipPath",{id:id+"k"},defs));
+      hairLayer(el("g",{"clip-path":"url(#"+id+"u)"},root),uncutMM,24,"u");
+      hairLayer(el("g",{"clip-path":"url(#"+id+"k)"},root),opt.mmAt,90,"k");
+      var line=el("line",{x1:40,x2:300,y1:Y0,y2:Y0,stroke:"#2FB3AF","stroke-width":2,"stroke-dasharray":"6 5"},root);
+      api.setCut=function(y){
+        ur.setAttribute("height",Math.max(0,y)); cr.setAttribute("y",y); cr.setAttribute("height",Math.max(0,440-y));
+        line.setAttribute("y1",y); line.setAttribute("y2",y); line.style.opacity=(y<=YTOP+1)?0:1;
+      };
+    } else {
+      var inner=hairLayer(el("g",{},root),opt.mmAt,opt.mode==="hand"?260:90,"s");
+      if(opt.mode==="hand"){
+        HAND_EDGES.slice(1).forEach(function(y,k){
+          var tilt=[5,-4,6,-3,4][k];   // a hand-cut guard line is never level
+          el("path",{d:"M0 "+(y+tilt)+" L400 "+(y-tilt),stroke:HAIRC,"stroke-opacity":.5,"stroke-width":2.5},inner);
+        });
+      }
+    }
+
+    // face details
+    var ink={fill:"none",stroke:"var(--ink)","stroke-linecap":"round","stroke-linejoin":"round"};
+    function stroke(d,w,o){var a={d:d,"stroke-width":w,"stroke-opacity":o||1};for(var k in ink)a[k]=ink[k];return el("path",a,root);}
+    stroke(FACE,2); stroke(NAPE,2);
+    el("path",{d:EAR,fill:"var(--skin)",stroke:"var(--ink)","stroke-width":1.8},root);
+    stroke("M224 196 C212 198 207 214 209 228 C211 242 217 250 225 251",1.4,.7);
+    stroke("M235 222 C231 226 231 233 235 237",1.4,.7);
+    el("path",{d:"M287 181 C297 173 310 172 321 177",fill:"none",stroke:HAIRC,"stroke-width":4.5,"stroke-linecap":"round"},root);
+    stroke("M297 198 C303 193 311 193 316 198",2);
+    el("circle",{cx:310,cy:198,r:2.3,fill:"var(--ink)"},root);
+    stroke("M331 258 C335 262 340 262 342 258",1.6,.7);
+    stroke("M325 290 C319 291 313 290 308 288",1.6,.75);
+    stroke("M301 353 C278 349 252 336 236 312",1.2,.35);
+    return api;
+  }
 
   // ----- the two still heads: by hand (hard steps) and CutIQ (smooth blend)
-  document.querySelectorAll("svg.mini").forEach(function(svg,i){
-    var id="m"+i, hand=svg.getAttribute("data-mode")==="hand";
-    var defs=el("defs",{});
-    var hc=el("clipPath",{id:id+"h"}); hc.appendChild(el("path",{d:HEAD})); defs.appendChild(hc);
-    var hr=el("clipPath",{id:id+"r"}); hr.appendChild(el("path",{d:HAIR})); defs.appendChild(hr);
-    var g=el("linearGradient",{id:id+"g",gradientUnits:"userSpaceOnUse",x1:0,y1:Y0,x2:0,y2:YTOP});
-    var yEnd=END.mid, h=(Y0-yEnd)/LOW.length, seq=LOW.concat([6]);
-    if(hand){
-      // each guard is a flat band with a hard edge, and the edges sit unevenly
-      var edges=[Y0,Y0-h*1.3,Y0-h*1.9,Y0-h*3.2,Y0-h*3.7,yEnd-8,YTOP];
-      seq.forEach(function(gd,k){
-        var a=alpha(MM[gd]);
-        g.appendChild(el("stop",{offset:off(edges[k]),"stop-color":"#1B1A19","stop-opacity":a}));
-        g.appendChild(el("stop",{offset:off(edges[k+1]),"stop-color":"#1B1A19","stop-opacity":a}));
-      });
-    } else {
-      g.appendChild(el("stop",{offset:0,"stop-color":"#1B1A19","stop-opacity":alpha(MM[0.5])}));
-      LOW.forEach(function(gd,k){g.appendChild(el("stop",{offset:off(Y0-(k+.5)*h),"stop-color":"#1B1A19","stop-opacity":alpha(MM[gd])}));});
-      g.appendChild(el("stop",{offset:off(yEnd-BLEND),"stop-color":"#1B1A19","stop-opacity":alpha(MM[6])}));
-      g.appendChild(el("stop",{offset:1,"stop-color":"#1B1A19","stop-opacity":alpha(MM[6])}));
-    }
-    defs.appendChild(g); svg.appendChild(defs);
-    var lines=[];
-    if(hand){ lines=[Y0-h*1.3,Y0-h*1.9,Y0-h*3.2,Y0-h*3.7,yEnd-8]; }
-    var root=el("g",{transform:"translate(-10,0)"});
-    root.appendChild(el("path",{d:HEAD,fill:"var(--skin)"}));
-    var c1=el("g",{"clip-path":"url(#"+id+"h)"}), c2=el("g",{"clip-path":"url(#"+id+"r)"});
-    c2.appendChild(el("rect",{x:0,y:0,width:380,height:430,fill:"url(#"+id+"g)"}));
-    lines.forEach(function(y,k){
-      // a hand-cut guard line is never level: tilt each one a little
-      var tilt=[6,-5,8,-4,5][k];
-      c2.appendChild(el("path",{d:"M0 "+(y+tilt)+" L380 "+(y-tilt),stroke:"#1B1A19","stroke-opacity":.55,"stroke-width":3}));
-    });
-    c1.appendChild(c2); root.appendChild(c1);
-    root.appendChild(el("path",{d:HEAD,fill:"none",stroke:"var(--ink)","stroke-width":2.2,"stroke-linejoin":"round"}));
-    root.appendChild(el("ellipse",{cx:238,cy:242,rx:19,ry:33,fill:"var(--skin)",stroke:"var(--ink)","stroke-width":2}));
-    root.appendChild(el("path",{d:"M242 222 C228 226 228 254 240 262",fill:"none",stroke:"var(--ink)","stroke-width":1.6}));
-    root.appendChild(el("circle",{cx:318,cy:208,r:3.4,fill:"var(--ink)"}));
-    svg.appendChild(root);
+  document.querySelectorAll("svg.mini").forEach(function(svg){
+    var hand=svg.getAttribute("data-mode")==="hand";
+    buildHead(svg,{mode:hand?"hand":"cutiq",mmAt:hand?handMM:planMM("mid",6),tx:0});
   });
 
   // ----- the live fade builder
-  var grad=document.getElementById("fadeGrad"), ruler=document.getElementById("ruler");
-  var cutRect=document.getElementById("cutRect"), cutLine=document.getElementById("cutLine"), clipper=document.getElementById("clipper");
+  var svg=document.getElementById("head"), TX=40;
   var roG=document.getElementById("roGuard"), roM=document.getElementById("roMm"), plan=document.getElementById("planText");
-  var state={height:"mid",top:6}, raf=null;
+  var state={height:"mid",top:6}, raf=null, head=null, clipper=null;
 
   function bands(){
     var yEnd=END[state.height], h=(Y0-yEnd)/LOW.length, out=[];
     LOW.forEach(function(g,i){out.push({g:g,y1:Y0-i*h,y2:Y0-(i+1)*h});});
-    out.push({g:state.top,y1:yEnd,y2:YTOP,blend:true});
+    out.push({g:state.top,y1:yEnd,y2:YTOP-30,blend:true});
     return out;
   }
   function guardAt(y){
@@ -504,49 +569,34 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
   function show(y){ var g=guardAt(y); roG.textContent="#"+g; roM.textContent=MM[g]+" mm"; }
 
   function draw(){
+    head=buildHead(svg,{mode:"live",mmAt:planMM(state.height,state.top),tx:TX});
     var b=bands(), yEnd=END[state.height];
-    while(grad.firstChild) grad.removeChild(grad.firstChild);
-    grad.appendChild(el("stop",{offset:"0","stop-color":"#1B1A19","stop-opacity":alpha(MM[LOW[0]])}));
-    b.slice(0,LOW.length).forEach(function(z){
-      grad.appendChild(el("stop",{offset:off((z.y1+z.y2)/2),"stop-color":"#1B1A19","stop-opacity":alpha(MM[z.g])}));
-    });
-    grad.appendChild(el("stop",{offset:off(yEnd-BLEND),"stop-color":"#1B1A19","stop-opacity":alpha(MM[state.top])}));
-    grad.appendChild(el("stop",{offset:"1","stop-color":"#1B1A19","stop-opacity":alpha(MM[state.top])}));
-    document.getElementById("uncut").setAttribute("opacity",alpha(25));
-
-    while(ruler.firstChild) ruler.removeChild(ruler.firstChild);
-    ruler.appendChild(el("line",{x1:40,x2:40,y1:YTOP,y2:Y0,stroke:"#D3DEDC","stroke-width":2}));
+    var ruler=el("g",{},svg);
+    el("line",{x1:38,x2:38,y1:YTOP,y2:Y0,stroke:"#D3DEDC","stroke-width":2},ruler);
     b.forEach(function(z){
-      var yc=z.blend?Math.max(YTOP+40,yEnd-BLEND-30):(z.y1+z.y2)/2;
-      ruler.appendChild(el("line",{x1:35,x2:45,y1:z.y1,y2:z.y1,stroke:"#4E6168","stroke-width":1.5}));
-      var t=el("text",{x:32,y:yc+5,"text-anchor":"end","font-family":"Big Shoulders Display, Arial Narrow, sans-serif","font-weight":"800","font-size":"17",fill:"#13232B"});
-      t.textContent="#"+z.g; ruler.appendChild(t);
+      var yc=z.blend?Math.max(YTOP+30,yEnd-BLEND-24):(z.y1+z.y2)/2;
+      el("line",{x1:33,x2:43,y1:z.y1,y2:z.y1,stroke:"#4E6168","stroke-width":1.5},ruler);
+      var t=el("text",{x:30,y:yc+5,"text-anchor":"end","font-family":"Big Shoulders Display, Arial Narrow, sans-serif","font-weight":"800","font-size":"15",fill:"#13232B"},ruler);
+      t.textContent="#"+z.g;
     });
+    clipper=el("g",{},svg);
+    el("rect",{x:2,y:-13,width:28,height:26,rx:7,fill:"var(--jar)"},clipper);
+    el("rect",{x:7,y:-7,width:18,height:4,rx:2,fill:"#fff"},clipper);
     plan.textContent=NAME[state.height]+" fade, #0.5 up to #"+state.top+" ("+INCH[state.top]+")";
   }
-
-  function setPos(y){
-    cutRect.setAttribute("y",y); cutRect.setAttribute("height",430-y);
-    cutLine.setAttribute("y1",y); cutLine.setAttribute("y2",y);
-    clipper.setAttribute("transform","translate(44,"+y+")");
-    cutLine.style.opacity=(y<=YTOP+1)?0:1;
-    show(y);
-  }
-  function settle(){
-    var y=END[state.height]+4;
-    clipper.setAttribute("transform","translate(44,"+y+")");
-    cutLine.style.opacity=0; show(y);
-  }
+  function place(y){ clipper.setAttribute("transform","translate(42,"+y+")"); }
+  function setPos(y){ head.setCut(y); place(y); show(y); }
+  function settle(){ var y=END[state.height]+4; head.setCut(YTOP-40); place(y); show(y); }
   function run(){
     if(raf) cancelAnimationFrame(raf);
     var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if(reduce){ setPos(YTOP); settle(); return; }
-    var start=null, dur=2600, from=Y0+20, to=YTOP;
+    if(reduce){ settle(); return; }
+    var start=null, dur=2600, from=Y0+20, to=YTOP-30;
     function step(t){
       if(!start) start=t;
       var p=Math.min(1,(t-start)/dur), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
       setPos(from+(to-from)*e);
-      if(p<1) raf=requestAnimationFrame(step); else { raf=null; setPos(YTOP); settle(); }
+      if(p<1) raf=requestAnimationFrame(step); else { raf=null; settle(); }
     }
     raf=requestAnimationFrame(step);
   }
@@ -556,18 +606,17 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
   document.getElementById("replay").addEventListener("click",run);
 
   // hover or drag over the head to read the guard at that height
-  var svg=document.getElementById("head");
   function probe(evt){
-    if(raf){cancelAnimationFrame(raf);raf=null;setPos(YTOP);}
+    if(raf){cancelAnimationFrame(raf);raf=null;head.setCut(YTOP-40);}
     var src=evt.touches?evt.touches[0]:evt, pt=svg.createSVGPoint();
     pt.x=src.clientX; pt.y=src.clientY;
-    var y=Math.max(YTOP+2,Math.min(Y0,pt.matrixTransform(svg.getScreenCTM().inverse()).y));
-    clipper.setAttribute("transform","translate(44,"+y+")"); show(y);
+    var y=Math.max(YTOP,Math.min(Y0,pt.matrixTransform(svg.getScreenCTM().inverse()).y));
+    place(y); show(y);
   }
   svg.addEventListener("mousemove",probe);
   svg.addEventListener("touchmove",probe,{passive:true});
 
-  draw(); setPos(YTOP); settle();
+  draw(); settle();
   setTimeout(run,450);
 
   // ----- barber math
