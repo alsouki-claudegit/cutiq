@@ -160,10 +160,6 @@ details p{color:var(--muted);margin-top:8px}
 
 footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;color:var(--muted)}
 
-.curls path{fill:none;stroke:#100D0B;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
-.curls path.hl{stroke:#9A7656;stroke-width:1.3;stroke-dasharray:7 40}
-.curls.beard path{stroke-width:2.6}
-.curls.beard path.hl{stroke:#7E6047;stroke-width:1}
 @media (max-width:900px){
   .hero-grid,.safety,.math,.price{grid-template-columns:1fr;gap:32px}
   .rig svg{max-height:520px}
@@ -418,25 +414,12 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
   var FACE_TAIL="C320 138 322 160 326 176 C330 183 325 189 320 194 C332 214 350 238 358 254 C361 262 354 269 343 268 C337 269 333 269 330 270 C331 276 335 280 335 284 C334 287 331 289 328 290 C333 292 335 296 333 301 C331 306 325 309 324 312 C325 318 334 326 332 338 C330 350 320 356 304 357 C288 358 266 356 256 362 C250 370 260 380 258 392 C256 404 252 418 254 440";
   // full beard with a mustache: cheek line, over the upper lip, round the chin and down to the throat
   var BEARD="M266 228 L265 250 C280 262 300 268 322 271 C329 272 334 276 340 281 C342 285 338 288 331 288 C327 290 326 293 328 297 C333 300 335 305 333 309 C341 320 349 336 346 352 C342 366 326 372 304 374 C286 375 272 374 260 368 C250 362 244 350 241 336 C237 320 234 302 237 286 C240 272 252 260 265 250 Z";
-  // seeded random so the curls land in the same place every load
-  var seed=7; function rnd(a,b){seed=(seed*16807)%2147483647; return a+(b-a)*(seed/2147483647);}
   var HEAD="M128 440 C124 405 116 375 118 346 C100 320 60 282 60 215 C60 120 130 42 205 40 C262 38 300 70 312 115 "+FACE_TAIL+" Z";
   var FACE="M306 99 C309 104 311 109 312 115 "+FACE_TAIL;
   var NAPE="M118 346 C116 375 124 405 128 440";
   var HAIRAREA="M305 96 C298 112 292 126 284 142 C276 152 270 158 268 166 L266 214 L241 214 C240 196 234 182 222 178 C206 176 196 186 193 204 C190 222 190 244 193 262 C180 286 160 312 140 330 C130 338 122 343 118 346 L40 362 L0 362 L0 0 L400 0 L400 60 Z";
   var EAR="M228 186 C208 180 196 198 197 220 C198 242 205 262 219 267 C228 270 233 262 231 254 C230 246 236 240 236 230 C236 222 238 212 236 202 C234 192 232 188 228 186 Z";
 
-  // hand drawn ringlets: spiral, S curl, loop, hook. Each is a dark stroke plus a short highlight
-  var GLYPHS=["M-6 2 C-6 -5 4 -7 6 -1 C8 5 0 8 -3 4 C-5 1 -1 -2 2 0",
-              "M-7 -4 C-2 -9 5 -5 2 0 C-1 5 6 9 8 4",
-              "M-5 5 C-9 -2 -2 -8 3 -6 C8 -4 7 3 2 4 C-1 5 -2 1 0 -1",
-              "M-6 -3 C-1 -8 7 -3 3 2 C0 6 -6 4 -4 0"];
-  function curl(parent,x,y,sc,rot){
-    var g=el("g",{transform:"translate("+x.toFixed(1)+" "+y.toFixed(1)+") rotate("+rot.toFixed(0)+") scale("+sc.toFixed(2)+")"},parent);
-    var d=GLYPHS[Math.floor(rnd(0,GLYPHS.length))];
-    el("path",{d:d},g);
-    el("path",{d:d,"class":"hl",transform:"translate(-.7 -.9)","stroke-dashoffset":rnd(0,40).toFixed(0)},g);
-  }
   function smooth(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
   function alpha(mm){return mm<=0?0:0.15+0.85*Math.sqrt(Math.min(mm,25)/25);}
 
@@ -461,7 +444,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
     for(var k=0;k<HAND_EDGES.length-1;k++){ if(y<=HAND_EDGES[k]&&y>HAND_EDGES[k+1]) return MM[seq[k]]; }
     return MM[6];
   }
-  function uncutMM(y){return y>Y0+2?0:40;}
+  function uncutMM(y){return y>Y0+2?0:25;}
 
   var uid=0;
   function buildHead(svg,opt){
@@ -489,7 +472,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
     function band(mmAt,frac){
       var outer=[],inner=[];
       pts.forEach(function(p){
-        var f=smooth(p.t/0.06)*smooth((1-p.t)/0.12), d=mmAt(p.y)*PX*f; d*=1+(0.06*Math.sin(p.t*131)+0.05*Math.sin(p.t*57+1.3))*smooth((d-6)/10); d*=(frac||1);
+        var f=smooth(p.t/0.06)*smooth((1-p.t)/0.12), d=mmAt(p.y)*PX*f*(frac||1);
         outer.push((p.x+p.nx*d).toFixed(1)+" "+(p.y+p.ny*d).toFixed(1));
         inner.push(p.x.toFixed(1)+" "+p.y.toFixed(1));
       });
@@ -507,23 +490,7 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
       el("rect",{x:0,y:0,width:400,height:440,fill:fill},inner);
       var bd=band(mmAt);
       el("path",{d:bd.fill,fill:fill},parent);
-      // ringlets wherever the hair is long enough to curl (over 12 mm); the faded sides stay smooth
-      var cg=el("g",{"class":"curls"},parent), ig=el("g",{"class":"curls"},inner);
-      for(var k=0;k<pts.length;k+=3){
-        var p=pts[k], f=smooth(p.t/0.06)*smooth((1-p.t)/0.12);
-        for(var dep=-110;dep<=44;dep+=10){
-          var jd=dep+rnd(-4,4), x=p.x+p.nx*jd+rnd(-3,3), y=p.y+p.ny*jd+rnd(-3,3), mm=mmAt(y);
-          if(mm<12) continue;
-          var sc=Math.min(1.25,.45+mm/40)*rnd(.8,1.15), out=mm*PX*f;
-          if(jd>0) sc=Math.min(sc,out/11);              // short tops keep their curls inside the outline
-          if(jd+5*sc>out+3) continue;
-          curl(jd>0?cg:ig,x,y,sc,rnd(0,360));
-        }
-      }
-      // fill the front hairline and temple, where the skull walk does not reach
-      for(var q=0;q<70;q++){ var fx=rnd(232,324), fy=rnd(82,222), fm=mmAt(fy);
-        if(fm>=12) curl(ig,fx,fy,Math.min(1.25,.45+fm/40)*rnd(.8,1.1),rnd(0,360)); }
-      el("path",{d:bd.edge,fill:"none",stroke:"var(--ink)","stroke-width":1.4,"stroke-linejoin":"round","stroke-opacity":.5},parent);
+      el("path",{d:bd.edge,fill:"none",stroke:"var(--ink)","stroke-width":1.7,"stroke-linejoin":"round","stroke-opacity":.9},parent);
       return inner;
     }
 
@@ -567,8 +534,6 @@ footer{border-top:1px solid var(--grout);padding:28px 0 40px;font-size:.9rem;col
     // beard: dark fill with curl texture, a little volume past the jaw
     var bid=id+"b"; el("path",{d:BEARD},el("clipPath",{id:bid},defs));
     el("path",{d:BEARD,fill:HAIRC,"fill-opacity":.9,stroke:HAIRC,"stroke-width":1.2,"stroke-linejoin":"round"},root);
-    var bg=el("g",{"clip-path":"url(#"+bid+")","class":"curls beard"},root);
-    for(var c=0;c<110;c++){ curl(bg,rnd(236,350),rnd(232,378),rnd(.42,.62),rnd(0,360)); }
     el("path",{d:EAR,fill:"var(--skin)",stroke:"var(--ink)","stroke-width":1.8},root);
     stroke("M224 196 C212 198 207 214 209 228 C211 242 217 250 225 251",1.4,.7);
     stroke("M235 222 C231 226 231 233 235 237",1.4,.7);
